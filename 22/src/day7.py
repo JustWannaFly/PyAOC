@@ -80,4 +80,28 @@ def part1():
     print('max size = ', max_size)
     print('sum of all dirs with size less than max = ', total_size)
 
-part1()
+def part2():
+    disk_size = 70000000
+    space_needed = 30000000
+    file_system = buildFileSystem(input)
+    used_space = file_system.get_size()
+    free_space = disk_size - used_space
+    needed_space = space_needed - free_space
+
+    smallest_big_enough = used_space
+    dir_stack = []
+    for child in file_system.children:
+        if (child.type == Type.dir):
+            dir_stack.append(child)
+    
+    while len(dir_stack) > 0:
+        dir = dir_stack.pop()
+        for child in dir.children:
+            if (child.type == Type.dir):
+                dir_stack.append(child)
+
+        size = dir.get_size()
+        if size > needed_space and size < smallest_big_enough:
+            smallest_big_enough = size
+    print('the the smallest dir to delete has a size of ', smallest_big_enough)
+part2()
