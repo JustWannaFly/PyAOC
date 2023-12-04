@@ -34,8 +34,8 @@ def part1(data):
     print(score)
 
 def part2(data):
-    cards = [] # (winning nums, card nums, instance count)
-    counts = []
+    cards = [] # (winning nums, card nums)
+    counts = [] # how many of each card I have
     for line in data:
         line = line.replace('\n', '')
         line = line.replace('  ', ' ')
