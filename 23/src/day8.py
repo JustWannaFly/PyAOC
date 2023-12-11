@@ -1,5 +1,6 @@
 from aocd import get_data
 from io import StringIO
+from math import lcm
 
 input = StringIO(get_data(year=2023, day=8))
 testInput = [
@@ -50,10 +51,9 @@ def part1(data):
 
     print('steps taken: ' + str(steps))
 
-def allEndInZ(locations):
-    for loc in locations:
-        if not loc[len(loc)-1] == 'Z':
-            return False
+def endsInZ(loc):
+    if not loc[len(loc)-1] == 'Z':
+        return False
     return True
 
 def getStartingLocations(desertMap):
@@ -66,19 +66,26 @@ def getStartingLocations(desertMap):
 
 def part2(data):
     directions, desertMap = parseInput(data)
-    locations = getStartingLocations(desertMap)
-    steps = 0
-    while not allEndInZ(locations):
-        direction = directions[steps % len(directions)]
-        steps = steps + 1
-        targetIndex = 0
-        if direction == 'R':
-            targetIndex = 1
-        newLocations = []
-        for location in locations:
-            newLocations.append(desertMap[location][targetIndex])
-        locations = newLocations
+    startingLocations = getStartingLocations(desertMap)
+    stepCounts = []
+    for location in startingLocations:
+        steps = 0
+        while not endsInZ(location):
+            direction = directions[steps % len(directions)]
+            steps = steps + 1
+            targetIndex = 0
+            if direction == 'R':
+                targetIndex = 1
+            location = desertMap[location][targetIndex]
+        stepCounts.append(steps)
 
-    print('steps taken: ' + str(steps))
+    # get the least common multiple of all the step counts
+    total = None
+    for count in stepCounts:
+        if total == None:
+            total = count
+        else:
+            total = lcm(total, count)
+    print('steps taken: ' + str(total))
 
 part2(input)
