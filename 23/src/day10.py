@@ -9,6 +9,27 @@ testInput = [
 '|F--J',
 'LJ...'
 ]
+testInput2 = [
+'.S-------7.',
+'.|F-----7|.',
+'.||.....||.',
+'.||.....||.',
+'.|L-7.F-J|.',
+'.|..|.|..|.',
+'.L--J.L--J.'
+]
+testInput3 = [
+'FF7FSF7F7F7F7F7F---7',
+'L|LJ||||||||||||F--J',
+'FL-7LJLJ||||||LJL-77',
+'F--JF--7||LJLJ7F7FJ-',
+'L---JF-JLJ.||-FJLJJ7',
+'|F|F-JF---7F7-L7L|7|',
+'|FFJF7L7F-JF7|JL---7',
+'7-L-JL7||F7|L7F-7F7|',
+'L.L7LFJ|||||FJL7||LJ',
+'L7JLJL-JLJLJL--JLJ.L'
+]
 
 north = 'n'
 south = 's'
@@ -16,6 +37,7 @@ east = 'e'
 west = 'w'
 blocked = 'b'
 start = 'S'
+inside = 'I'
 
 def getPipeMap(data):
     pipeMap = []
@@ -112,7 +134,53 @@ def part1(data):
 
     print(pathLengh/2)
 
+def isCoordInList(coord, coordList):
+    for checkCoord in coordList:
+        if isSameLocation(coord, checkCoord):
+            return True
+    return False
+        
 def part2(data):
-    print('I dunno yet')
+    pipeMap = getPipeMap(data)
+    startCoords = getStartCoords(pipeMap)
+    direction = getStartDirection(pipeMap, startCoords)
+    coords = startCoords
+    pathCoords = []
+    going = True
+    while going:
+        pathCoords.append(coords)
+        coords = getNextCoords(direction, coords)
+        symbol = pipeMap[coords[0]][coords[1]]
+        direction = getNextDir(direction, symbol)
+        if isSameLocation(coords, startCoords):
+            going = False
 
-part1(input)
+    insideCount = 0
+    for y in range(len(pipeMap[0])):
+        crossCount = 0
+        downwardLeft = False
+        upwardLeft = False
+        for x in range(len(pipeMap)):
+            if isCoordInList((x, y), pathCoords):
+                symbol = pipeMap[x][y]
+                if symbol == '|':
+                    crossCount = crossCount + 1
+                elif symbol == 'L':
+                    downwardLeft = True
+                elif symbol == 'F':
+                    upwardLeft = True
+                elif downwardLeft and symbol == '7':
+                    crossCount = crossCount + 1
+                    downwardLeft = False
+                elif downwardLeft and symbol == 'J':
+                    downwardLeft = False
+                elif upwardLeft and symbol == 'J':
+                    crossCount = crossCount + 1
+                    upwardLeft = False
+                elif upwardLeft and symbol == '7':
+                    upwardLeft = False
+            elif crossCount % 2 == 1:
+                insideCount = insideCount + 1
+    print(insideCount)
+
+part2(input)
