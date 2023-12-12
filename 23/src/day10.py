@@ -133,12 +133,6 @@ def part1(data):
             going = False
 
     print(pathLengh/2)
-
-def isCoordInList(coord, coordList):
-    for checkCoord in coordList:
-        if isSameLocation(coord, checkCoord):
-            return True
-    return False
         
 def part2(data):
     pipeMap = getPipeMap(data)
@@ -155,13 +149,21 @@ def part2(data):
         if isSameLocation(coords, startCoords):
             going = False
 
+    pathMap = []
+    for x in range(len(pipeMap)):
+        pathMap.append([])
+        for y in range(len(pipeMap[0])):
+            pathMap[x].append(False)
+    for coord in pathCoords:
+        pathMap[coord[0]][coord[1]] = True
+
     insideCount = 0
     for y in range(len(pipeMap[0])):
         crossCount = 0
         downwardLeft = False
         upwardLeft = False
         for x in range(len(pipeMap)):
-            if isCoordInList((x, y), pathCoords):
+            if pathMap[x][y]:
                 symbol = pipeMap[x][y]
                 if symbol == '|':
                     crossCount = crossCount + 1
